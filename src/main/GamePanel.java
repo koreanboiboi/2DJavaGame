@@ -8,6 +8,7 @@ import java.awt.Graphics2D;
 import javax.swing.JPanel;
 
 import entity.Player;
+import tiles.TileManager;
 
 
 
@@ -18,17 +19,26 @@ public class GamePanel extends JPanel implements Runnable {
 
 
     public int tileSize = originalTileSize * scale;// 48x48
-    final int maxScreenCol = 16;
-    final int maxScreenRow = 12; // this will give aspect ration 4:3
-    final int screenWidth = tileSize * maxScreenCol; // 768 pixels
-    final int screenHeight = tileSize * maxScreenRow; // 576 pixels
+    public int maxScreenCol = 16;
+    public int maxScreenRow = 12; // this will give aspect ration 4:3
+    public int screenWidth = tileSize * maxScreenCol; // 768 pixels
+    public int screenHeight = tileSize * maxScreenRow; // 576 pixels
+
+    //world settings
+    public final int maxWorldCol = 50;
+    public final int maxWorldRow = 50;
+    public final int worldWidth = tileSize * maxWorldCol;
+    public final int worldHeight = tileSize * maxWorldRow;
 
     //FPS
     int FPS = 60;
 
+
+    TileManager tileM = new TileManager(this);
     KeyHandler keyH = new KeyHandler();
     Thread gameThread;
-    Player player = new Player(this,keyH);
+    public CollisonChecker colChecker = new CollisonChecker(this);
+    public Player player = new Player(this,keyH);
 
     //set player's default positioon
     int playerX = 100;
@@ -101,6 +111,8 @@ public class GamePanel extends JPanel implements Runnable {
 
         Graphics2D g2 = (Graphics2D)g;
 
+        //we draw tile first then player otherwise background tile will hide player
+        tileM.draw(g2);
         player.draw(g2);
     
         g2.dispose();
